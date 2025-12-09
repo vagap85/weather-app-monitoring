@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Погода в {{ weather.city }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .weather-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+
+        .city-name {
+            font-size: 36px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .weather-icon {
+            width: 120px;
+            height: 120px;
+            margin: 15px auto;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
+        }
+
+        .temperature {
+            font-size: 82px;
+            font-weight: 800;
+            color: #1a1a2e;
+            margin: 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .description {
+            font-size: 26px;
+            color: #555;
+            text-transform: capitalize;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .weather-item {
+            background: linear-gradient(145deg, #f0f0f0, #ffffff);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.1),
+                        -5px -5px 15px rgba(255,255,255,0.7);
+            transition: transform 0.3s ease;
+        }
+
+        .weather-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .item-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .item-value {
+            font-size: 22px;
+            color: #2c3e50;
+            font-weight: 700;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .time-display {
+            margin-top: 25px;
+            font-size: 14px;
+            color: #95a5a6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .time-icon {
+            font-size: 18px;
+        }
+
+        .container-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f4fc;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #3498db;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="weather-container">
+        <h1 class="city-name">
+            <i class="fas fa-city"></i> {{ weather.city }}
+        </h1>
+
+        <img class="weather-icon"
+             src="https://openweathermap.org/img/wn/{{ weather.icon }}@4x.png"
+             alt="{{ weather.description }}"
+             onerror="this.src='https://openweathermap.org/img/wn/01d@4x.png'">
+
+        <div class="temperature">
+            {{ "%.1f"|format(weather.temperature) }}°C
+        </div>
+
+        <div class="description">
+            <i class="fas fa-cloud"></i> {{ weather.description }}
+        </div>
+
+        <div class="weather-grid">
+            <div class="weather-item">
+                <div class="item-label">
+                    <i class="fas fa-temperature-low"></i> Ощущается
+                </div>
+                <div class="item-value">
+                    {{ "%.1f"|format(weather.feels_like) }}°C
+                </div>
+            </div>
+
+            <div class="weather-item">
+                <div class="item-label">
+                    <i class="fas fa-tint"></i> Влажность
+                </div>
+                <div class="item-value">
+                    {{ weather.humidity }}%
+                </div>
+            </div>
+
+            <div class="weather-item">
+                <div class="item-label">
+                    <i class="fas fa-tachometer-alt"></i> Давление
+                </div>
+                <div class="item-value">
+                    {{ weather.pressure }} гПа
+                </div>
+            </div>
+
+            <div class="weather-item">
+                <div class="item-label">
+                    <i class="fas fa-wind"></i> Ветер
+                </div>
+                <div class="item-value">
+                    {{ "%.1f"|format(weather.wind_speed) }} м/с
+                </div>
+            </div>
+        </div>
+
+        <div class="time-display">
+            <i class="fas fa-clock time-icon"></i>
+            <span id="currentTime">Обновление времени...</span>
+        </div>
+
+        <div class="status-badge">
+            <i class="fas fa-check-circle"></i> Приложение работает в Docker
+        </div>
+
+        <div class="container-info">
+            <i class="fas fa-server"></i> Контейнер: weather-app |
+            <i class="fas fa-heartbeat"></i> <a href="/health" style="color: #3498db;">Проверка здоровья</a> |
+            <i class="fas fa-chart-line"></i> <a href="/metrics" style="color: #3498db;">Метрики</a>
+        </div>
+    </div>
+
+    <script>
+        // Обновление времени в реальном времени
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('ru-RU', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('currentTime').textContent =
+                Обновлено: ${timeString};
+        }
+
+        // Обновление времени каждую секунду
+        updateCurrentTime();
+        setInterval(updateCurrentTime, 1000);
+
+        // Плавное появление элементов
+        document.addEventListener('DOMContentLoaded', function() {
+            const items = document.querySelectorAll('.weather-item');
+            items.forEach((item, index) => {
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Анимация температуры
+            const tempElement = document.querySelector('.temperature');
+            setTimeout(() => {
+                tempElement.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    tempElement.style.transform = 'scale(1)';
+                }, 300);
+            }, 500);
+        });
+    </script>
+</body>
+</html>
